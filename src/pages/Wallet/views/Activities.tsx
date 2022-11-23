@@ -51,14 +51,13 @@ const Activities = () => {
   const { account, chainId } = rootState.wallet;
   const { selectedNetwork } = rootState.extensions;
   const [list, setList] = useState<any[]>([]);
-  const grouped = groupBy(list, (activity) => moment(activity.createdTime).calendar().split(' ')[0]);
+  const grouped = groupBy(list, (activity) => moment(activity.createdTime).format('DD/MM/YYYY'));
 
   const [isLoadData, setIsLoadData] = useState(true);
 
   useEffect(() => {
     getLocalActivities(
       selectedNetwork.networkId,
-      chainId,
       account,
       (activities) => {
         const newActivityList = [...activities];
@@ -106,7 +105,7 @@ const Activities = () => {
                   return activity;
                 });
                 setList(newList);
-                setLocalActivities(selectedNetwork.networkId, chainId, account, newList);
+                setLocalActivities(selectedNetwork.networkId, account, newList);
               }
             })
             .catch(() => {});
@@ -119,16 +118,19 @@ const Activities = () => {
     );
   }, [account, chainId, selectedNetwork.networkId]);
   if (isLoadData) return <div />;
+
+  const todayString = moment().format('DD/MM/YYYY');
+  const yesterdayString = moment().subtract(1, 'days').format('DD/MM/YYYY');
   return (
     <Div>
       {list && list.length ? (
         <>
           <DivChild>
             <DivScroll>
-              {grouped?.Today && (
+              {grouped && grouped[todayString] && (
                 <>
                   <DayLabel uppercase>Today</DayLabel>
-                  {grouped?.Today.map((item) => {
+                  {grouped[todayString].map((item) => {
                     if (!item || !item.receiverChainId) return null;
                     return (
                       <Div
@@ -153,10 +155,10 @@ const Activities = () => {
                   })}
                 </>
               )}
-              {grouped?.Yesterday && (
+              {grouped && grouped[yesterdayString] && (
                 <>
                   <DayLabel uppercase>Yesterday</DayLabel>
-                  {grouped?.Yesterday.map((item) => {
+                  {grouped[yesterdayString].map((item) => {
                     if (!item || !item.receiverChainId) return null;
                     return (
                       <Div
@@ -182,10 +184,10 @@ const Activities = () => {
                 </>
               )}
               {Object.keys(grouped)
-                .filter((key) => key !== 'Today' && key !== 'Yesterday')
+                .filter((key) => key !== yesterdayString && key !== todayString)
                 .map((date) => (
                   <>
-                    <DayLabel uppercase>{moment(date).format('DD/MM/YYYY')}</DayLabel>
+                    <DayLabel uppercase>{moment(date, 'DD/MM/YYYY').format('DD/MM/YYYY')}</DayLabel>
                     {grouped[date].map((item) => {
                       if (!item || !item.receiverChainId) return null;
                       return (
