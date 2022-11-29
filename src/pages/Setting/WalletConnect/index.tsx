@@ -111,10 +111,83 @@ const WalletConnect = () => {
         },
       });
     });
+    signClient.on('session_event', (event) => {
+      // Handle session events, such as "chainChanged", "accountsChanged", etc.
+      console.log(`🚀 !!! ~session_event event`, event);
+    });
 
-    // const a = signClient.pair({ uri: code });
-    // console.log(`🚀 !!! ~ a`, a);
-    // console.log(`🚀 !!! ~ signClient`, signClient);
+    signClient.on('session_request', (event) => {
+      console.log(`🚀 !!! ~session_request event`, event);
+      const eventData = {
+        id: 1669680337524760,
+        topic: '249d15cc4bdabc1c714b651a8220963c5de447fdb6e646b23c13003bf939410c',
+        params: {
+          request: {
+            method: 'kadena_sign',
+            params: {
+              pactCode:
+                '(kaddex.exchange.swap-exact-in\n          (read-decimal \'token0Amount)\n          (read-decimal \'token1AmountWithSlippage)\n          [coin kaddex.kdx]\n          "k:2e6....................................................4940e"\n          "k:2e6....................................................4940e"\n          (read-keyset \'user-ks)\n        )',
+              caps: [
+                {
+                  role: 'Gas Station',
+                  description: 'free gas',
+                  cap: {
+                    name: 'kaddex.gas-station.GAS_PAYER',
+                    args: [
+                      'kaddex-free-gas',
+                      {
+                        int: 1,
+                      },
+                      1,
+                    ],
+                  },
+                },
+                {
+                  role: 'transfer capability',
+                  description: 'trasnsfer token in',
+                  cap: {
+                    name: 'coin.TRANSFER',
+                    args: [
+                      'k:2e6....................................................4940e',
+                      '4iBIX0hsSprc7sYvUKLLlMd7_1uVEb6eheF33VBv1p0',
+                      0.6263474345,
+                    ],
+                  },
+                },
+              ],
+              sender: 'kaddex-free-gas',
+              gasLimit: 10000,
+              gasPrice: 1e-7,
+              chainId: '2',
+              ttl: 600,
+              envData: {
+                'user-ks': {
+                  pred: 'keys-all',
+                  keys: ['2e6....................................................4940e'],
+                },
+                token0Amount: 0.6263474345,
+                token1Amount: 19.294522449691,
+                token0AmountWithSlippage: 0.657664806225,
+                token1AmountWithSlippage: 18.329796327206,
+              },
+              signingPubKey: '2e6....................................................4940e',
+              networkId: 'mainnet01',
+              networkVersion: '0.0',
+            },
+          },
+          chainId: 'kadena:mainnet01',
+        },
+      };
+      // Handle session method requests, such as "eth_sign", "eth_sendTransaction", etc.
+    });
+
+    signClient.on('session_ping', (event) => {
+      // React to session ping event
+    });
+
+    signClient.on('session_delete', (event) => {
+      // React to session delete event
+    });
   };
 
   return (
