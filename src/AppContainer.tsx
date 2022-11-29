@@ -29,6 +29,7 @@ import InitSeedPhrase from './pages/InitSeedPhrase';
 import ExportSeedPhrase from './pages/Setting/ExportSeedPhrase';
 import History from './pages/Wallet/views/History';
 import PageTransaction from './pages/Setting/Transaction';
+import WalletConnect from './pages/Setting/WalletConnect';
 
 const Container = styled.div`
   width: 1000px;
@@ -53,6 +54,7 @@ const AppContainer = () => {
         <PrivateRoute isFirstInstall path="/init-seed-phrase" component={InitSeedPhrase} />
         <PrivateRoute isSeedPhrase isSignIn path="/seed-phrase" component={SeedPhrase} />
         <PrivateRoute path="/export-seed-phrase" component={ExportSeedPhrase} />
+        <PrivateRoute path="/wallet-connect" component={WalletConnect} />
         <PrivateRoute isSignIn path="/sign-in" component={SignIn} />
         <PrivateRoute path="/import-wallet" component={ImportAccount} />
         <PrivateRoute path="/import-token" component={importToken} />

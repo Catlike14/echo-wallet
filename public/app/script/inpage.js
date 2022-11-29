@@ -55,6 +55,8 @@ window.kadena = {
   },
 
   request: async (options) => {
+    console.log(`-----INPAGE---`, Date.now());
+    console.log(`🚀 !!! ~ options`, options);
     const domain = window.location.hostname || window.window.location.href;
     const icon = getFavicon() || 'no icon';
 

@@ -52,6 +52,12 @@ const PageSetting = () => {
     { title: 'Contacts', img: <ContactsIcon />, description: 'Add, edit, remove and manage your contacts', onClick: () => history.push('/contact') },
     { title: 'Networks', img: <NetworksIcon />, description: 'Add or edit custom RPC networks', onClick: () => history.push('/networks') },
     {
+      title: 'Wallet Connect',
+      img: <NetworksIcon />,
+      description: 'Connect wallet with Wallet Connect',
+      onClick: () => history.push('/wallet-connect'),
+    },
+    {
       title: 'Transaction Settings',
       img: <NetworksIcon />,
       description: 'Edit Gas Limit, Gas Price, Gas Station...',

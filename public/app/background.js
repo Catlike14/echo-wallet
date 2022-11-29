@@ -89,6 +89,8 @@ chrome.runtime.onConnect.addListener(async (port) => {
   contentPort = port;
 
   contentPort.onMessage.addListener(async (payload, sender) => {
+    console.log(`-----BACKGROUND---`, Date.now());
+    console.log(`🚀 !!! ~ payload`, payload);
     const action = payload.action || '';
     const originTabId = sender?.sender?.tab?.id;
 
@@ -186,6 +188,7 @@ const disconnect = async (data, tabId) => {
 };
 
 const kdaRequestSign = async (data, tabId) => {
+  console.log(`🚀 !!! ~ data kdaRequestSign`, data);
   const isValidNetwork = await verifyNetwork(data.networkId);
   if (isValidNetwork) {
     const isValid = await checkValid(data);
@@ -229,7 +232,7 @@ const kdaRequestSign = async (data, tabId) => {
         data.signedCmd = signedCmd;
         data.tabId = tabId;
         showSignPopup(data);
-      } catch {
+      } catch (err) {
         sendToConnectedPorts({
           result: {
             status: 'fail',
