@@ -341,7 +341,6 @@ const getSelectedWallet = async (isHaveSecret = false) => {
         chrome.storage.local.get('accountPassword', (password) => {
           const { accountPassword } = password;
           const newWallet = {
-            chainId: selectedWallet.chainId,
             account: decryptKey(selectedWallet.account, accountPassword),
             publicKey: decryptKey(selectedWallet.publicKey, accountPassword),
             connectedSites: selectedWallet.connectedSites,
@@ -353,7 +352,6 @@ const getSelectedWallet = async (isHaveSecret = false) => {
         });
       } else {
         resolve({
-          chainId: '0',
           account: '',
           publicKey: '',
           connectedSites: [],
@@ -362,29 +360,6 @@ const getSelectedWallet = async (isHaveSecret = false) => {
     });
   });
   return newSelectedWallet;
-};
-
-const getWalletInfo = async (account) => {
-  const wallet = await new Promise((resolve) => {
-    chrome.storage.local.get('selectedNetwork', (result) => {
-      if (result && result.selectedNetwork) {
-        const { selectedNetwork } = result;
-        const { account: accountName, chainId } = account;
-        const pactCode = `(coin.details "${accountName}")`;
-        fetchLocal(pactCode, selectedNetwork.url, selectedNetwork.networkId, chainId)
-          .then((res) => {
-            const newBalance = get(res, 'result.data.balance', 0);
-            resolve({ ...account, balance: newBalance });
-          })
-          .catch(() => {
-            resolve({ ...account, balance: 0 });
-          });
-      } else {
-        resolve({ ...account, balance: 0 });
-      }
-    });
-  });
-  return wallet;
 };
 
 const checkValid = async (data) => {
@@ -539,7 +514,6 @@ const getSelectedAccount = async (tabId) => {
         target: 'kda.content',
         action: 'res_getSelectedAccount',
         selectedAccount: {
-          chainId: result?.selectedWallet?.chainId,
           account: decryptKey(result?.selectedWallet?.account, accountPassword),
           publicKey: decryptKey(result?.selectedWallet.publicKey, accountPassword),
         },
@@ -560,12 +534,11 @@ const getAccountSelected = async (data, tabId) => {
     const isValid = await checkValid(data);
     if (isValid) {
       const account = await getSelectedWallet();
-      const walletInfo = await getWalletInfo(account);
       sendToConnectedPorts({
         result: {
           status: 'success',
           message: 'Get account information successfully',
-          wallet: walletInfo,
+          wallet: account,
         },
         target: 'kda.content',
         action: 'res_requestAccount',
@@ -598,7 +571,7 @@ const getAccountSelected = async (data, tabId) => {
 chrome.storage.onChanged.addListener((changes, namespace) => {
   for (const [key, { oldValue, newValue }] of Object.entries(changes)) {
     if (key === 'selectedWallet') {
-      if (!newValue || (newValue && oldValue && (newValue.account !== oldValue.account || newValue.chainId !== oldValue.chainId))) {
+      if (!newValue || (newValue && oldValue && newValue.account !== oldValue.account)) {
         chrome.storage.local.set({ activeDapps: [] });
       }
       const successMsg = {
