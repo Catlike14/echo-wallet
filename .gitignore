@@ -21,6 +21,7 @@
 .env.production.local
 .env
 /.cache
+/.parcel-cache
 /.idea
 
 npm-debug.log*

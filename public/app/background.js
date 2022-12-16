@@ -2,10 +2,13 @@
 import Pact from 'pact-lang-api';
 import 'regenerator-runtime/runtime';
 import { get } from 'lodash';
+import SignClient from '@walletconnect/sign-client';
 import { decryptKey } from '../../src/utils/security';
 import { fetchLocal, getSignatureFromHash } from '../../src/utils/chainweb';
 import { getTimestamp } from '../../src/utils';
 import { XWALLET_DAPP_SIGN_NONCE } from '../../src/utils/config';
+
+console.log(`🚀 !!! ~ SignClient`, SignClient);
 
 let contentPort = null;
 const portMap = new Map();
