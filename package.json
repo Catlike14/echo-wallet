@@ -20,7 +20,7 @@
     "bcryptjs": "^2.4.3",
     "bignumber.js": "^9.0.1",
     "bip39": "^3.0.4",
-    "cardano-crypto.js": "https://github.com/kadena-io/cardano-crypto.js.git#jam@chainweaver-keygen",
+    "cardano-crypto.js": "file:./cardano-crypto.js",
     "crypto-js": "^4.1.1",
     "eslint-import-resolver-typescript": "^2.5.0",
     "jspdf": "^2.4.0",
