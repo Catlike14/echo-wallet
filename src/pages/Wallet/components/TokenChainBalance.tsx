@@ -7,7 +7,13 @@ import { DivFlex, CommonLabel } from 'src/components';
 import { humanReadableNumber } from 'src/utils';
 import { TokenElementProps } from './TokenElement';
 
-export const TokenChainBalance = ({ name, contractAddress, balance, usdBalance, chainId, isNonTransferable }: TokenElementProps) => {
+interface ChainBalanceToken extends TokenElementProps {
+  contractAddress?: string;
+  isNonTransferable?: boolean;
+  chainId: number;
+}
+
+export const TokenChainBalance = ({ name, contractAddress, balance, usdBalance, chainId, isNonTransferable }: ChainBalanceToken) => {
   const history = useHistory();
   const { closeModal } = useModalContext();
 

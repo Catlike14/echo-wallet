@@ -18,12 +18,9 @@ export const TokenElement = ({ logo, name, balance, isLoadingBalances, usdBalanc
 
 export interface TokenElementProps {
   name: string;
-  contractAddress?: string;
   balance: number;
   usdBalance: number;
   logo?: string;
   isLoadingBalances?: boolean;
-  isNonTransferable?: boolean;
-  chainId?: number;
   onClick?: any;
 }
