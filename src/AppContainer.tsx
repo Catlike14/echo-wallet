@@ -32,6 +32,7 @@ import History from './pages/Wallet/views/History';
 import PageTransaction from './pages/Setting/Transaction';
 import PageLockSettings from './pages/Setting/Lock';
 import PageConnectedSites from './pages/Setting/ConnectedSites';
+import PageWalletConnect from './pages/Setting/WalletConnect';
 
 const Container = styled.div`
   width: 1000px;
@@ -73,6 +74,7 @@ const AppContainer = () => {
         <PrivateRoute path="/tx-settings" component={PageTransaction} />
         <PrivateRoute path="/lock-settings" component={PageLockSettings} />
         <PrivateRoute path="/about" component={PageAbout} />
+        <PrivateRoute path="/wallet-connect" component={PageWalletConnect} />
         <PrivateRoute path="/setting" component={PageSetting} />
         <PrivateRoute path="/history" component={History} />
         <PrivateRoute isHome path="/" component={Wallet} />

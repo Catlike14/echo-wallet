@@ -73,9 +73,7 @@
   },
   "browserslist": {
     "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
+      "last 5 chrome version"
     ],
     "development": [
       "last 1 chrome version",
@@ -90,6 +88,7 @@
     "@parcel/config-default": "^2.8.2",
     "@parcel/config-webextension": "^2.8.3",
     "@parcel/packager-raw-url": "^2.8.3",
+    "@parcel/transformer-babel": "^2.8.3",
     "@parcel/transformer-typescript-tsc": "^2.8.2",
     "@parcel/transformer-webmanifest": "^2.8.3",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
@@ -111,7 +110,7 @@
   },
   "targets": {
     "default": {
-      "distDir": "./output"
+      "distDir": "./build"
     }
   }
 }

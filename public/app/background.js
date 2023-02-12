@@ -31,6 +31,9 @@ chrome.runtime.onStartup.addListener(() => {
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   const tabIdResponse = request?.tabId || sender?.tab?.id;
   if (request.target === 'kda.background') {
+    if (request.action === 'initWalletConnect' && request.uri) {
+      initWalletConnect(request.uri);
+    }
     let senderPort = null;
     for (const [tabId, port] of portMap.entries()) {
       if (tabId === tabIdResponse) {
@@ -737,3 +740,48 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
     }
   }
 });
+
+const initWalletConnect = async (uri) => {
+  const core = new Core({
+    projectId: process.env.PROJECT_ID,
+  });
+  console.log(`🚀 !!! ~ coreano`, core);
+
+  const web3wallet = await Web3Wallet.init({
+    core, // <- pass the shared `core` instance
+    metadata: {
+      description: 'Swap for KDA and KDX',
+      url: 'https://swap.kaddex.com/',
+      icons: ['https://kaddex.com/Kaddex_icon.png'],
+    },
+  });
+  console.log(`🚀 !!! ~ web3Wall`, web3wallet);
+  web3wallet.on('session_proposal', async (proposal) => {
+    const { account } = await getSelectedWallet(true);
+    const KDA_NETWORK_PREFIXES = ['kadena:mainnet01', 'kadena:testnet04', 'kadena:development'];
+    const accounts = [
+      `${KDA_NETWORK_PREFIXES[0]}:${account.replace(':', '**')}`,
+      `${KDA_NETWORK_PREFIXES[1]}:${account.replace(':', '**')}`,
+      `${KDA_NETWORK_PREFIXES[2]}:${account.replace(':', '**')}`,
+    ];
+    const session = await web3wallet.approveSession({
+      id: proposal.id,
+      namespaces: {
+        kadena: {
+          accounts,
+          methods: ['kadena_sign', 'kadena_quicksign'],
+          events: ['kadena_transaction_updated'],
+          extension: [
+            {
+              accounts,
+              methods: ['sign', 'send_transaction', 'sign_transaction', 'quicksign_transaction'],
+              events: ['account_changed'],
+            },
+          ],
+        },
+      },
+    });
+  });
+  const pair = await web3wallet.core.pairing.pair({ uri });
+  console.log(`🚀 !!! ~ pair`, pair);
+};
