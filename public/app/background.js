@@ -9,6 +9,20 @@ import { fetchLocal, getSignatureFromHash } from '../../src/utils/chainweb';
 import { getTimestamp } from '../../src/utils';
 import { XWALLET_DAPP_SIGN_NONCE } from '../../src/utils/config';
 
+const core = new Core({
+  projectId: process.env.PROJECT_ID,
+});
+console.log(`🚀 !!! ~ coreano`, core);
+
+const web3wallet = await Web3Wallet.init({
+  core, // <- pass the shared `core` instance
+  metadata: {
+    description: 'Swap for KDA and KDX',
+    url: 'https://swap.kaddex.com/',
+    icons: ['https://kaddex.com/Kaddex_icon.png'],
+  },
+});
+
 let contentPort = null;
 const portMap = new Map();
 
