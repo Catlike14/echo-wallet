@@ -36,3 +36,11 @@ export const updateQuickSignedCmdMessage = (result, tabId) => {
     tabId,
   });
 };
+
+export const initWalletConnect = (uri) => {
+  (window as any)?.chrome?.runtime?.sendMessage({
+    uri,
+    target: 'kda.background',
+    action: 'initWalletConnect',
+  });
+};

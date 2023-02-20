@@ -6,7 +6,6 @@
     "@babel/core": "^7.15.5",
     "@babel/preset-env": "^7.16.0",
     "@babel/runtime": "^7.16.0",
-    "@bumaga/tabs": "^0.2.0",
     "@craco/craco": "^6.3.0",
     "@kadena/cryptography-utils": "^0.1.1",
     "@reduxjs/toolkit": "^1.6.2",
@@ -18,6 +17,9 @@
     "@types/react": "^17.0.27",
     "@types/react-dom": "^17.0.9",
     "@types/webpack": "^5.28.0",
+    "@walletconnect/core": "^2.4.4",
+    "@walletconnect/sign-client": "^2.4.4",
+    "@walletconnect/web3wallet": "^1.2.0",
     "bcryptjs": "^2.4.3",
     "bignumber.js": "^9.0.1",
     "bip39": "^3.0.4",
@@ -27,7 +29,6 @@
     "jspdf": "^2.4.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
-    "node-sass": "4.14.1",
     "pact-lang-api": "^4.2.0",
     "qrcode.react": "^1.0.1",
     "react": "^17.0.2",
@@ -57,7 +58,7 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "craco build && parcel build public/app/* -d build/app",
+    "build": "craco build && parcel build public/app/* -d build/app --no-source-maps --no-minify",
     "test": "craco test",
     "eject": "react-scripts eject",
     "lint": "eslint ./src",
@@ -86,8 +87,10 @@
     "styled-components": "^5"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-optional-chaining": "^7.20.7",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
+    "babel-preset-env": "^1.7.0",
     "eslint": "^7.32.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-import-resolver-alias": "^1.1.2",
@@ -97,7 +100,8 @@
     "eslint-plugin-react": "^7.26.1",
     "eslint-plugin-react-hooks": "^4.2.0",
     "parcel-bundler": "^1.12.5",
-    "prettier": "^2.5.1"
+    "prettier": "^2.5.1",
+    "sass": "^1.58.3"
   },
   "targets": {
     "default": {

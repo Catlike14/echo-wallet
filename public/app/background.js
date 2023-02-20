@@ -1,6 +1,10 @@
 /* eslint no-use-before-define: 0 */
-import Pact from 'pact-lang-api';
+
 import 'regenerator-runtime/runtime';
+import Pact from 'pact-lang-api';
+import { Core } from '@walletconnect/core';
+import { Web3Wallet } from '@walletconnect/web3wallet';
+import { SignClient } from '@walletconnect/sign-client';
 import { hash as kadenaJSHash, sign as kadenaJSSign } from '@kadena/cryptography-utils';
 import { decryptKey } from '../../src/utils/security';
 import { getSignatureFromHash } from '../../src/utils/chainweb';
@@ -29,6 +33,9 @@ chrome.runtime.onStartup.addListener(() => {
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   const tabIdResponse = request?.tabId || sender?.tab?.id;
   if (request.target === 'kda.background') {
+    if (request.action === 'initWalletConnect' && request.uri) {
+      initWalletConnect(request.uri);
+    }
     let senderPort = null;
     for (const [tabId, port] of portMap.entries()) {
       if (tabId === tabIdResponse) {
@@ -717,3 +724,52 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
     }
   }
 });
+
+const initWalletConnect = async (uri) => {
+  console.log(`🚀 !!! ~ uri`, uri);
+  console.log(`🚀 !!! ~ process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID`, process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID);
+  console.log(`🚀 !!! ~ process.env.REACT_APP_WALLET_CONNECT_RELAY_URL`, process.env.REACT_APP_WALLET_CONNECT_RELAY_URL);
+  const core = new Core({
+    projectId: process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID,
+  });
+  console.log(`🚀 !!! ~ core`, core);
+
+  const web3wallet = await Web3Wallet.init({
+    core, // <- pass the shared `core` instance
+    metadata: {
+      name: 'X-Wallet',
+      description: 'X-Wallet',
+      url: 'https://xwallet.kaddex.com/',
+      icons: ['https://kaddex.com/Kaddex_icon.png'],
+    },
+  });
+  console.log(`🚀 !!! ~ web3wallet`, web3wallet);
+  web3wallet.on('session_proposal', async (proposal) => {
+    const session = await web3wallet.approveSession({
+      id: proposal.id,
+      namespaces: {
+        kadena: {
+          accounts: [
+            'kadena:mainnet01:k**2e6..........................4940e',
+            'kadena:testnet04:k**2e6..........................4940e',
+            'kadena:development:k**2e6..........................4940e',
+          ],
+          methods: ['kadena_sign', 'kadena_quicksign'],
+          events: ['kadena_transaction_updated'],
+          extension: [
+            {
+              accounts: [
+                'kadena:mainnet01:k**2e6..........................4940e',
+                'kadena:testnet04:k**2e6..........................4940e',
+                'kadena:development:k**2e6..........................4940e',
+              ],
+              methods: ['kaddex_sign', 'kaddex_send_transaction', 'kaddex_sign_transaction'],
+              events: ['account_changed', 'chain_id_changed'],
+            },
+          ],
+        },
+      },
+    });
+  });
+  await web3wallet.core.pairing.pair({ uri });
+};
