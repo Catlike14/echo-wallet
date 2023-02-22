@@ -60,7 +60,6 @@ const PageWalletConnect = () => {
   };
 
   const handleConfirmCode = async () => {
-    console.log(`🚀 !!! ~ code`, code);
     initWalletConnect(code);
   };
 
@@ -95,26 +94,3 @@ const PageWalletConnect = () => {
   );
 };
 export default PageWalletConnect;
-
-const namespaceExample = {
-  kadena: {
-    accounts: [
-      'kadena:mainnet01:k**2e6..........................4940e',
-      'kadena:testnet04:k**2e6..........................4940e',
-      'kadena:development:k**2e6..........................4940e',
-    ],
-    methods: ['kadena_sign', 'kadena_quicksign'],
-    events: ['kadena_transaction_updated'],
-    extension: [
-      {
-        accounts: [
-          'kadena:mainnet01:k**2e6..........................4940e',
-          'kadena:testnet04:k**2e6..........................4940e',
-          'kadena:development:k**2e6..........................4940e',
-        ],
-        methods: ['kaddex_sign', 'kaddex_send_transaction', 'kaddex_sign_transaction'],
-        events: ['account_changed', 'chain_id_changed'],
-      },
-    ],
-  },
-};

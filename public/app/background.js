@@ -1,10 +1,13 @@
+/* eslint-disable func-names */
+/* eslint-disable prefer-arrow-callback */
+/* eslint-disable no-undef */
+/* eslint-disable no-restricted-syntax */
 /* eslint no-use-before-define: 0 */
 
 import 'regenerator-runtime/runtime';
 import Pact from 'pact-lang-api';
 import { Core } from '@walletconnect/core';
 import { Web3Wallet } from '@walletconnect/web3wallet';
-import { SignClient } from '@walletconnect/sign-client';
 import { hash as kadenaJSHash, sign as kadenaJSSign } from '@kadena/cryptography-utils';
 import { decryptKey } from '../../src/utils/security';
 import { getSignatureFromHash } from '../../src/utils/chainweb';
@@ -733,6 +736,15 @@ const initWalletConnect = async (uri) => {
     projectId: process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID,
   });
   console.log(`🚀 !!! ~ core`, core);
+  // sometimes isBrowser() is false
+  WebSocket.prototype.on = function (event, clb) {
+    // socket.on("error", errorEvent => {
+    //   reject(this.emitError(errorEvent));
+    // });
+    if (event === 'error') {
+      this.onerror = clb;
+    }
+  };
 
   const web3wallet = await Web3Wallet.init({
     core, // <- pass the shared `core` instance
@@ -745,23 +757,25 @@ const initWalletConnect = async (uri) => {
   });
   console.log(`🚀 !!! ~ web3wallet`, web3wallet);
   web3wallet.on('session_proposal', async (proposal) => {
+    const account = await getSelectedWallet();
+    const connectStringAccount = account.account.replace(':', '**');
     const session = await web3wallet.approveSession({
       id: proposal.id,
       namespaces: {
         kadena: {
           accounts: [
-            'kadena:mainnet01:k**2e6..........................4940e',
-            'kadena:testnet04:k**2e6..........................4940e',
-            'kadena:development:k**2e6..........................4940e',
+            `kadena:mainnet01:${connectStringAccount}`,
+            `kadena:testnet04:${connectStringAccount}`,
+            `kadena:development:${connectStringAccount}`,
           ],
           methods: ['kadena_sign', 'kadena_quicksign'],
           events: ['kadena_transaction_updated'],
           extension: [
             {
               accounts: [
-                'kadena:mainnet01:k**2e6..........................4940e',
-                'kadena:testnet04:k**2e6..........................4940e',
-                'kadena:development:k**2e6..........................4940e',
+                `kadena:mainnet01:${connectStringAccount}`,
+                `kadena:testnet04:${connectStringAccount}`,
+                `kadena:development:${connectStringAccount}`,
               ],
               methods: ['kaddex_sign', 'kaddex_send_transaction', 'kaddex_sign_transaction'],
               events: ['account_changed', 'chain_id_changed'],
@@ -770,6 +784,13 @@ const initWalletConnect = async (uri) => {
         },
       },
     });
+    console.log(`🚀 !!! ~ session`, session);
   });
+  web3wallet?.on('session_proposal', (event) => console.log('session_proposal', event));
+  web3wallet?.on('session_request', (event) => console.log('session_request', event));
+  web3wallet?.on('session_delete', (event) => console.log('session_delete', event));
+  web3wallet?.on('session_event', (event) => console.log('session_event', event));
+  web3wallet?.on('pairing_delete', (event) => console.log('pairing_delete', event));
+  web3wallet?.on('pairing_expire', (event) => console.log('pairing_expire', event));
   await web3wallet.core.pairing.pair({ uri });
 };
